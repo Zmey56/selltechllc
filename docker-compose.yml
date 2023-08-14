@@ -1,0 +1,23 @@
+version: '3'
+services:
+  selltechllc-db-1:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: "zmey56"
+      POSTGRES_PASSWORD: "zmey56"
+      POSTGRES_DB: "postgres"
+    networks:
+      - selltechllc-network
+    ports:
+      - "5432:5432"
+  selltechllc-app-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - selltechllc-network
+    ports:
+      - "8080:8080"
+networks:
+  selltechllc-network:
+

@@ -1,22 +1,17 @@
-FROM golang:1.20 AS build
+FROM golang:latest
 
-ENV GO111MODULE=on \
-    CGO_ENABLED=0 \
-    GOOS=linux \
-    GOARCH=amd64
+ENV GO111MODULE=on
+ENV GOPATH=/
 
-WORKDIR /app
+COPY ./ ./
 
-COPY . .
+RUN go mod download
 
 RUN go build -o main .
 
-FROM alpine:latest
-
-RUN apk --no-cache add ca-certificates
-
-COPY --from=build /app/main /app/main
-
 EXPOSE 8080
 
-CMD ["/app/main"]
+CMD ["./main"]
+
+
+

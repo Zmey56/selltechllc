@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	host     = "localhost"
+	host     = "selltechllc-db-1"
 	port     = 5432
 	user     = "zmey56"
 	password = "zmey56"

@@ -2,14 +2,13 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"strings"
 	"time"
 )
 
 const (
-	host     = "selltechllc-db-1"
+	host     = "localhost"
 	port     = 5432
 	user     = "zmey56"
 	password = "zmey56"
@@ -26,8 +25,7 @@ type SDN struct {
 	LastName  string `xml:"last_name"`
 }
 
-func NewPostgreSQL() (*DBImpl, error) {
-	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+func NewPostgreSQL(psqlconn string) (*DBImpl, error) {
 
 	// open database
 	db, err := sql.Open("postgres", psqlconn)
@@ -50,12 +48,11 @@ func (db *DBImpl) DBClose() error {
 }
 
 func (db *DBImpl) CreateTableSellTechLCC() error {
-	_, err := db.db.Exec(`CREATE TABLE IF NOT EXIST selltechlcc(
+	_, err := db.db.Exec(`CREATE TABLE selltechlcc(
 								uid INT not NULL PRIMARY KEY,
 								first_name VARCHAR ( 255 ),
 								last_name VARCHAR ( 255 ),
-								created_on TIMESTAMP NOT NULL
-							)`)
+								created_on TIMESTAMP NOT null);`)
 	return err
 }
 

@@ -1,17 +1,16 @@
 FROM golang:latest
 
-ENV GO111MODULE=on
-ENV GOPATH=/
+WORKDIR /app
 
-COPY ./ ./
+COPY . .
 
-RUN go mod download
+RUN go get -d -v ./...
 
-RUN go build -o main .
+RUN go build -o selltechllc .
 
-EXPOSE 8080
+EXPOSE 8000
 
-CMD ["./main"]
+CMD ["./selltechllc"]
 
 
 

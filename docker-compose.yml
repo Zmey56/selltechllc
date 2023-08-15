@@ -1,26 +1,25 @@
-version: '3'
+version: '3.9'
 services:
-  selltechllc-db-1:
-    restart: always
+  go-app:
+    container_name: "go-app"
+    build: .
+    environment:
+      DATABASE_URL: "host=go_db user=zmey56 password=zmey56 dbname=postgres sslmode=disable"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - go_db
+  go_db:
+    container_name: go_db
     image: postgres:14
     environment:
-      POSTGRES_USER: "zmey56"
-      POSTGRES_PASSWORD: "zmey56"
-      POSTGRES_DB: "postgres"
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - selltechllc-network
+      POSTGRES_PASSWORD: zmey56
+      POSTGRES_USER: zmey56
+      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
-  selltechllc-app-1:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    networks:
-      - selltechllc-network
-    ports:
-      - "8080:8080"
-networks:
-  selltechllc-network:
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata: {}
 

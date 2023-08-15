@@ -6,7 +6,7 @@ services:
     environment:
       DATABASE_URL: "host=go_db user=zmey56 password=zmey56 dbname=postgres sslmode=disable"
     ports:
-      - "8000:8000"
+      - "8080:8080"
     depends_on:
       - go_db
   go_db:

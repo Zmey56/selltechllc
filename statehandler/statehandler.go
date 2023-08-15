@@ -12,7 +12,7 @@ type State struct {
 	Info   string `json:"info"`
 }
 
-func StateHandler(db *repository.DBImpl) http.HandlerFunc {
+func StateHandler(db repository.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if pkg.UpdatingFlag {
 			stateResponse(w, false, "updating")

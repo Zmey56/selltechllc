@@ -20,7 +20,7 @@ type SDN struct {
 	sdnType      string `xml:"sdnType"`
 }
 
-func UpdateHandler(db *repository.DBImpl) http.HandlerFunc {
+func UpdateHandler(db repository.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if pkg.UpdatingFlag {
 			http.Error(w, `{"result": false, "info": "service unavailable", "code": 503}`, http.StatusServiceUnavailable)
@@ -73,3 +73,6 @@ func UpdateHandler(db *repository.DBImpl) http.HandlerFunc {
 
 	}
 }
+
+//Ответ на 3 вопрос: Обновление внешних данных может быть асинхронным, чтобы не блокировать обработку запроса. Так же можно
+//сохранять время последнего обновления данных.

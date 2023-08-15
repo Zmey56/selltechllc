@@ -1,7 +1,8 @@
-package repository
+package dbrepo
 
 import (
 	"database/sql"
+	"github.com/Zmey56/selltechllc/repository"
 	"log"
 	"strings"
 	"time"
@@ -15,40 +16,13 @@ const (
 	dbname   = "postgres"
 )
 
-type DBImpl struct {
-	db *sql.DB
-}
-
-type SDN struct {
-	UID       int    `xml:"uid"`
-	FirstName string `xml:"first_name"`
-	LastName  string `xml:"last_name"`
-}
-
-func NewPostgreSQL(psqlconn string) (*DBImpl, error) {
-
-	// open database
-	db, err := sql.Open("postgres", psqlconn)
-	if err != nil {
-		return nil, err
-	}
-
-	// check db
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
-
-	return &DBImpl{db: db}, nil
-}
-
 func (db *DBImpl) DBClose() error {
-	return db.db.Close()
+	return db.DB.Close()
 
 }
 
 func (db *DBImpl) CreateTableSellTechLCC() error {
-	_, err := db.db.Exec(`CREATE TABLE selltechlcc(
+	_, err := db.DB.Exec(`CREATE TABLE selltechlcc(
 								uid INT not NULL PRIMARY KEY,
 								first_name VARCHAR ( 255 ),
 								last_name VARCHAR ( 255 ),
@@ -60,7 +34,7 @@ func (db *DBImpl) InsertDataTable(uid, first_name, last_name string) error {
 	sqlStatement := `INSERT INTO selltechlcc (uid, first_name, last_name, created_on) VALUES ($1, $2, $3, $4)
  						ON CONFLICT (uid) DO UPDATE SET first_name = $2, last_name = $3, created_on = $4;`
 
-	_, err := db.db.Exec(sqlStatement, uid, first_name, last_name, time.Now())
+	_, err := db.DB.Exec(sqlStatement, uid, first_name, last_name, time.Now())
 	if err != nil {
 		log.Println("Error inserting data:", err)
 		return err
@@ -72,7 +46,7 @@ func (db *DBImpl) InsertDataTable(uid, first_name, last_name string) error {
 func (db *DBImpl) CountData() (int, error) {
 	sqlStatmentCount := `SELECT COUNT(*) FROM selltechlcc`
 	var count int
-	row := db.db.QueryRow(sqlStatmentCount)
+	row := db.DB.QueryRow(sqlStatmentCount)
 	err := row.Scan(&count)
 	if err != nil {
 		return 0, err
@@ -80,7 +54,7 @@ func (db *DBImpl) CountData() (int, error) {
 	return count, nil
 }
 
-func (db *DBImpl) GetNameFromDB(names []string, nameType string) ([]SDN, error) {
+func (db *DBImpl) GetNameFromDB(names []string, nameType string) ([]repository.SDN, error) {
 	var rows *sql.Rows
 	var err error
 
@@ -92,13 +66,13 @@ func (db *DBImpl) GetNameFromDB(names []string, nameType string) ([]SDN, error) 
 		if len(names) > 1 {
 			tmpName := names[0:(len(names) - 1)]
 			name := strings.Join(tmpName, " ")
-			rows, err = db.db.Query("SELECT uid, first_name, last_name FROM selltechlcc WHERE"+
+			rows, err = db.DB.Query("SELECT uid, first_name, last_name FROM selltechlcc WHERE"+
 				" first_name = '%' || $1 || '%' AND last_name = '%' || $2 || '%'", name, names[len(names)-1])
 			if err != nil {
 				return nil, err
 			}
 		} else {
-			rows, err = db.db.Query("SELECT uid, first_name, last_name FROM selltechlcc WHERE"+
+			rows, err = db.DB.Query("SELECT uid, first_name, last_name FROM selltechlcc WHERE"+
 				" first_name = $1 OR last_name = $1", names[0])
 			if err != nil {
 				return nil, err
@@ -106,7 +80,7 @@ func (db *DBImpl) GetNameFromDB(names []string, nameType string) ([]SDN, error) 
 		}
 	} else {
 		for _, name := range names {
-			rows, err = db.db.Query("SELECT uid, first_name, last_name FROM selltechlcc WHERE"+
+			rows, err = db.DB.Query("SELECT uid, first_name, last_name FROM selltechlcc WHERE"+
 				" first_name ILIKE '%' || $1 || '%' OR last_name ILIKE '%' || $1 || '%'", name)
 			if err != nil {
 				return nil, err
@@ -114,9 +88,9 @@ func (db *DBImpl) GetNameFromDB(names []string, nameType string) ([]SDN, error) 
 		}
 	}
 
-	var results []SDN
+	var results []repository.SDN
 	for rows.Next() {
-		var sdn SDN
+		var sdn repository.SDN
 		err := rows.Scan(&sdn.UID, &sdn.FirstName, &sdn.LastName)
 		if err != nil {
 			if err != nil {

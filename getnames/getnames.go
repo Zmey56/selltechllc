@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func GetNames(db *repository.DBImpl) http.HandlerFunc {
+func GetNames(db repository.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if pkg.UpdatingFlag {
 			http.Error(w, `{"result": false, "info": "service unavailable", "code": 503}`, http.StatusServiceUnavailable)

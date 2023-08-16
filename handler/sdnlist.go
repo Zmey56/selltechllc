@@ -1,4 +1,4 @@
-package updatehandler
+package handler
 
 import "encoding/xml"
 

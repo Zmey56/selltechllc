@@ -18,7 +18,6 @@ const (
 
 func (db *DBImpl) DBClose() error {
 	return db.DB.Close()
-
 }
 
 func (db *DBImpl) CreateTableSellTechLCC() error {
